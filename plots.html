@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Участки - СТСН "Дубки-2"</title>
+    <link rel="shortcut icon" href="images/group.png"/>
+    <style>
+        /* Общие стили из предыдущих страниц */
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary: #f5f5f5;
+            --text: #333;
+            --text-light: #666;
+            --background: #fff;
+            --card-bg: #f9f9f9;
+            --border-radius: 12px;
+            --gap: 20px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header (как на других страницах) */
+        header {
+            background-color: var(--background);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Page Title (как на других страницах) */
+        .page-title {
+            text-align: center;
+            margin: 40px 0;
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        /* Bento Grid (как на главной странице) */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--gap);
+            margin-bottom: 40px;
+        }
+
+        .bento-card {
+            background-color: #d1e7d1;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Стили для карточек участков */
+        .plot-images {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        .plot-image {
+            height: 180px;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+        }
+
+        .plot-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .plot-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .plot-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .plot-description {
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .plot-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Стили для формы добавления участка (модальное окно) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--background);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .file-upload-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Login Notice (как на других страницах) */
+        .login-notice {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        /* Footer (как на других страницах) */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive (как на других страницах) */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .plot-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (как на других страницах) -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html"><img src="images/logo.jpg" alt="СТСН Дубки-2" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="documents.html">Документы</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                    <li><a href="forum.html">Форум</a></li>
+                    <li><a href="plots.html">Участки</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <!-- Будет заполнено JavaScript -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Участки СТСН "Дубки-2"</h1>
+        
+        <div style="text-align: right; margin-bottom: 20px;">
+            <button class="btn btn-primary" id="createPlotBtn">Добавить участок</button>
+        </div>
+        
+        <div class="bento-grid" id="plotsGrid">
+            <!-- Участки будут загружены через JavaScript -->
+            <div class="bento-card">
+                <div class="plot-images">
+                    <img src="images/plot1.jpg" class="plot-image" alt="Участок">
+                </div>
+                <h3 class="plot-title">Участок №45</h3>
+                <div class="plot-meta">
+                    <span>8 соток</span>
+                </div>
+                <div class="plot-price">1 200 000 ₽</div>
+                <p class="plot-description">Хороший ухоженный участок с плодородной почвой. Есть электричество и скважина.</p>
+                <div class="plot-actions">
+                    <button class="btn btn-outline">Откликнуться</button>
+                </div>
+            </div>
+            
+            <div class="bento-card">
+                <div class="plot-images">
+                    <img src="images/plot2.jpg" class="plot-image" alt="Участок">
+                </div>
+                <h3 class="plot-title">Участок №78</h3>
+                <div class="plot-meta">
+                    <span>10 соток</span>
+                </div>
+                <div class="plot-price">1 500 000 ₽</div>
+                <p class="plot-description">Просторный участок с молодым садом. Подъездная дорога асфальтирована.</p>
+                <div class="plot-actions">
+                    <button class="btn btn-outline">Откликнуться</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Для неавторизованных пользователей -->
+        <div class="login-notice" id="loginNotice" style="display: none;">
+            <h3>Хотите добавить участок?</h3>
+            <p>Для размещения объявлений необходимо авторизоваться.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <a href="auth.html" class="btn btn-outline">Войти</a>
+                <a href="auth.html#register" class="btn btn-primary">Зарегистрироваться</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно добавления участка -->
+    <div class="modal" id="plotModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePlotModal">&times;</span>
+            <h2>Добавить участок</h2>
+            <form id="plotForm">
+                <div class="form-group">
+                    <label for="plotNumber">Номер участка</label>
+                    <input type="text" id="plotNumber" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plotSize">Размер (соток)</label>
+                    <input type="number" id="plotSize" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plotPrice">Цена (руб.)</label>
+                    <input type="number" id="plotPrice" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plotDescription">Описание</label>
+                    <textarea id="plotDescription" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Фотографии участка (максимум 3)</label>
+                    <div class="file-upload">
+                        <label for="plotPhotos" class="file-upload-btn">Выбрать файлы</label>
+                        <span class="file-name" id="plotPhotosName">Файлы не выбраны</span>
+                        <input type="file" id="plotPhotos" accept="image/*" multiple style="display: none;">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Опубликовать</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer (как на других страницах) -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>СТСН "Дубки-2"</h3>
+                    <p>Садовое товарищество с комфортными условиями для отдыха и садоводства.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="news.html">Новости</a></li>
+                        <li><a href="documents.html">Документы</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Сообщество</h3>
+                    <ul>
+                        <li><a href="forum.html">Форум</a></li>
+                        <li><a href="plots.html">Участки</a></li>
+                        <li><a href="auth.html">Регистрация</a></li>
+                        <li><a href="auth.html">Вход</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>Телефон: +7 (495) 123-45-67</li>
+                        <li>Email: dubki-2@gmail.com</li>
+                        <li>Адрес: Владимирская область, Александровский район, СТСН Дубки-2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СТСН "Дубки-2". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Проверка авторизации
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const authButtons = document.getElementById('authButtons');
+            const loginNotice = document.getElementById('loginNotice');
+            const createPlotBtn = document.getElementById('createPlotBtn');
+            
+            if (currentUser) {
+                // Пользователь авторизован
+                authButtons.innerHTML = `
+                    <a href="auth.html" class="btn btn-primary">Вход/Регистрация</a>
+                `;
+            } else {
+                // Пользователь не авторизован
+                authButtons.innerHTML = `
+                    <a href="auth.html" class="btn btn-primary">Вход/Регистрация</a>
+                `;
+                loginNotice.style.display = 'block';
+                createPlotBtn.style.display = 'none';
+            }
+            
+            // Обработчики модального окна
+            createPlotBtn.addEventListener('click', function() {
+                document.getElementById('plotModal').style.display = 'flex';
+            });
+            
+            document.getElementById('closePlotModal').addEventListener('click', function() {
+                document.getElementById('plotModal').style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === document.getElementById('plotModal')) {
+                    document.getElementById('plotModal').style.display = 'none';
+                }
+            });
+            
+            // Обработчик выбора файлов
+            document.getElementById('plotPhotos').addEventListener('change', function() {
+                const files = this.files;
+                document.getElementById('plotPhotosName').textContent = 
+                    files.length > 0 ? `Выбрано ${files.length} файл(ов)` : 'Файлы не выбраны';
+            });
+            
+            // Обработчик формы
+            document.getElementById('plotForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const plotData = {
+                    number: document.getElementById('plotNumber').value,
+                    size: document.getElementById('plotSize').value,
+                    price: document.getElementById('plotPrice').value,
+                    description: document.getElementById('plotDescription').value,
+                    photos: []
+                };
+                
+                // Здесь должна быть обработка загрузки фото и сохранения данных
+                alert('Участок успешно добавлен!');
+                document.getElementById('plotModal').style.display = 'none';
+                this.reset();
+                document.getElementById('plotPhotosName').textContent = 'Файлы не выбраны';
+                
+                // Обновляем список участков
+                loadPlots();
+            });
+            
+            // Загрузка участков
+            function loadPlots() {
+                // Здесь должна быть загрузка участков из хранилища
+            }
+        });
+    </script>
+</body>
+</html>

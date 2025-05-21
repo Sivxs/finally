@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация - СТСН "Дубки-2"</title>
+    <link rel="shortcut icon" href="images/group.png"/>
+    <style>
+        /* Общие стили */
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary: #f5f5f5;
+            --text: #333;
+            --text-light: #666;
+            --background: #fff;
+            --card-bg: #f9f9f9;
+            --border-radius: 12px;
+            --gap: 20px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--background);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+                .btn-outline:hover {            background-color: var(--primary);            color: white;            transform: translateY(-2px);        }        /* Main Auth Content */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 40px 0;
+        }
+
+        .auth-box {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            background-color: #f5f5f5;
+        }
+
+        .auth-tab.active {
+            background-color: var(--background);
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .auth-form {
+            padding: 30px;
+            background-color: #d1e7d1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .file-upload-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        .switch-form a {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-notice {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .auth-box {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-tabs {
+                flex-direction: column;
+            }
+
+            .auth-tab {
+                padding: 12px;
+            }
+
+            .auth-form {
+                padding: 20px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html"><img src="images/logo.jpg" alt="СТСН Дубки-2" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="documents.html">Документы</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                    <li><a href="forum.html">Форум</a></li>
+                    <li><a href="plots.html">Участки</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <!-- Заполнится через JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="auth-container">
+            <div class="auth-box">
+                <div class="auth-tabs">
+                    <div class="auth-tab" onclick="switchForm('login')" data-form="login">Вход</div>
+                    <div class="auth-tab" onclick="switchForm('register')" data-form="register">Регистрация</div>
+                </div>
+
+                <!-- Форма входа -->
+                <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Пароль</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Войти</button>
+                </form>
+
+                <!-- Форма регистрации -->
+                <form id="registerForm" class="auth-form" style="display: none;" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="firstName">Имя</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Фамилия</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Номер телефона</label>
+                        <input type="tel" id="phone" required pattern="[0-9+\s-()]{10,}" title="Введите корректный номер телефона">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Пароль</label>
+                        <input type="password" id="registerPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="document">Документ о собственности участка</label>
+                        <input type="file" id="document" name="document" required accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                        <div class="file-upload">
+                            <button type="button" class="btn file-upload-btn" id="fileButton">Выбрать файл</button>
+                            <span class="file-name" id="fileName">Файл не выбран</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Отправить заявку</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>СТСН "Дубки-2"</h3>
+                    <p>Садовое товарищество с комфортными условиями для отдыха и садоводства.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="news.html">Новости</a></li>
+                        <li><a href="documents.html">Документы</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Сообщество</h3>
+                    <ul>
+                        <li><a href="forum.html">Форум</a></li>
+                        <li><a href="plots.html">Участки</a></li>
+                        <li><a href="auth.html">Регистрация</a></li>
+                        <li><a href="auth.html">Вход</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>Телефон: +7 (495) 123-45-67</li>
+                        <li>Email: dubki-2@gmail.com</li>
+                        <li>Адрес: Владимирская область, Александровский район, СТСН Дубки-2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СТСН "Дубки-2". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Предустановленные данные админа
+        const adminCredentials = {
+            email: 'admin1@gmail.com',
+            password: '123456',
+            name: 'Всеволод',
+            role: 'admin'
+        };
+
+        // Сохраняем админа при первом запуске
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify([adminCredentials]));
+        }
+
+        // Переключение между формами
+        function switchForm(formType) {
+            document.getElementById('loginForm').style.display = formType === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = formType === 'register' ? 'block' : 'none';
+            document.querySelector(`[data-form="login"]`).classList.toggle('active', formType === 'login');
+            document.querySelector(`[data-form="register"]`).classList.toggle('active', formType === 'register');
+        }
+
+        // Обработка выбора файла
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('document');
+            const fileButton = document.getElementById('fileButton');
+            const fileName = document.getElementById('fileName');
+
+            // Обработчик клика по кнопке
+            fileButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                fileInput.click();
+            });
+
+            // Обработчик изменения файла
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        alert('Размер файла не должен превышать 5MB');
+                        e.target.value = '';
+                        fileName.textContent = 'Файл не выбран';
+                        return;
+                    }
+                    fileName.textContent = file.name;
+                } else {
+                    fileName.textContent = 'Файл не выбран';
+                }
+            });
+
+            // Инициализация форм
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+
+            // Предотвращаем отправку формы при нажатии Enter
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+        });
+
+        // Обработка входа
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Проверяем данные админа
+            if (email === adminCredentials.email && password === adminCredentials.password) {
+                localStorage.setItem('userRole', 'admin');
+                localStorage.setItem('userName', adminCredentials.name);
+                window.location.href = 'account.html';
+                return;
+            }
+
+            // Проверяем обычных пользователей
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                if (!user.isApproved) {
+                    alert('Ваша учетная запись еще не подтверждена администратором');
+                    return;
+                }
+                localStorage.setItem('userRole', 'user');
+                localStorage.setItem('userName', user.firstName);
+                window.location.href = 'account.html';
+            } else {
+                alert('Неверный email или пароль');
+            }
+        }
+
+        // Обработка регистрации
+        function handleRegister(event) {
+            event.preventDefault();
+
+            // Получаем значения полей
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const documentFile = document.getElementById('document').files[0];
+
+            // Проверяем заполнение всех полей
+            if (!firstName || !lastName || !phone || !email || !password || !documentFile) {
+                alert('Пожалуйста, заполните все поля и прикрепите документ');
+                return;
+            }
+
+            // Проверяем формат телефона
+            const phoneRegex = /^[0-9+\s-()]{10,}$/;
+            if (!phoneRegex.test(phone)) {
+                alert('Пожалуйста, введите корректный номер телефона');
+                return;
+            }
+
+            // Проверяем длину пароля
+            if (password.length < 6) {
+                alert('Пароль должен содержать минимум 6 символов');
+                return;
+            }
+
+            // Проверяем, не существует ли уже такой email
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const registrations = JSON.parse(localStorage.getItem('registrations') || '[]');
+
+            if (users.some(u => u.email === email) || registrations.some(r => r.email === email)) {
+                alert('Пользователь с таким email уже существует');
+                return;
+            }
+
+            // Проверяем размер файла
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (documentFile.size > maxSize) {
+                alert('Размер файла не должен превышать 5MB');
+                return;
+            }
+
+            // Читаем файл как Data URL
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const registration = {
+                    firstName,
+                    lastName,
+                    phone,
+                    email,
+                    password,
+                    document: e.target.result,
+                    documentName: documentFile.name,
+                    timestamp: new Date().toISOString()
+                };
+
+                try {
+                    // Сохраняем заявку
+                    registrations.push(registration);
+                    localStorage.setItem('registrations', JSON.stringify(registrations));
+
+                    // Очищаем форму
+                    event.target.reset();
+                    document.getElementById('fileName').textContent = 'Файл не выбран';
+                    
+                    alert('Ваша заявка отправлена на рассмотрение администратору');
+                    switchForm('login');
+                } catch (error) {
+                    alert('Произошла ошибка при сохранении заявки. Попробуйте еще раз или обратитесь к администратору.');
+                    console.error('Ошибка сохранения:', error);
+                }
+            };
+
+            reader.onerror = function() {
+                alert('Ошибка при чтении файла. Пожалуйста, попробуйте другой файл.');
+            };
+
+            reader.readAsDataURL(documentFile);
+        }
+
+        // Активируем вкладку входа по умолчанию
+        document.querySelector('[data-form="login"]').classList.add('active');
+    </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - СТСН "Дубки-2"</title>
+    <link rel="shortcut icon" href="images/group.png"/>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary: #f5f5f5;
+            --text: #333;
+            --text-light: #666;
+            --background: #fff;
+            --card-bg: #f9f9f9;
+            --border-radius: 12px;
+            --gap: 20px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--background);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin: 40px 0;
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        /* Contacts Section */
+        .contacts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .contacts-info {
+            background-color: #d1e7d1;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .contacts-info h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 15px;
+            margin-top: 3px;
+        }
+
+        .contact-text h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .contact-text p, .contact-text a {
+            color: var(--text-light);
+        }
+
+        .contact-text a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 400px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        #yandex-map {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Working Hours */
+        .working-hours {
+            margin-top: 30px;
+        }
+
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .hours-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .hours-table td {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .contacts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .map-container {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html"><img src="images/logo.jpg" alt="СТСН Дубки-2" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="documents.html">Документы</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                    <li><a href="forum.html">Форум</a></li>
+                    <li><a href="plots.html">Участки</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <a href="auth.html" class="btn btn-primary">Вход/Регистрация</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Контакты СТСН "Дубки-2"</h1>
+        
+        <div class="contacts-section">
+            <div class="contacts-info">
+                <h2>Наши контакты</h2>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text">
+                        <h3>Адрес</h3>
+                        <p>Владимирская область, Александровский район, СТСН Дубки-2</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-text">
+                        <h3>Телефон</h3>
+                        <p><a href="tel:+74951234567">+7 (495) 123-45-67</a></p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <p><a href="mailto:dubki-2@example.com">dubki-2@gmail.com</a></p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">🕒</div>
+                    <div class="contact-text">
+                        <h3>Режим работы офиса</h3>
+                        <p>Прием посетителей </p>
+                    </div>
+                </div>
+                
+                <div class="working-hours">
+                    <h3>Часы работы:</h3>
+                    <table class="hours-table">
+                        <tr>
+                            <td>Понедельник</td>
+                            <td>10:00 - 16:00</td>
+                        </tr>
+                        <tr>
+                            <td>Среда</td>
+                            <td>10:00 - 16:00</td>
+                        </tr>
+                        <tr>
+                            <td>Пятница</td>
+                            <td>10:00 - 16:00</td>
+                        </tr>
+                        <tr>
+                            <td>Суббота</td>
+                            <td>11:00 - 15:00</td>
+                        </tr>
+                        <tr>
+                            <td>Воскресенье</td>
+                            <td>Выходной</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <!-- Яндекс.Карта -->
+                <div id="yandex-map"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>СТСН "Дубки-2"</h3>
+                    <p>Садовое товарищество с комфортными условиями для отдыха и садоводства.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="news.html">Новости</a></li>
+                        <li><a href="documents.html">Документы</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Сообщество</h3>
+                    <ul>
+                        <li><a href="forum.html">Форум</a></li>
+                        <li><a href="plots.html">Участки</a></li>
+                        <li><a href="auth.html">Регистрация</a></li>
+                        <li><a href="auth.html">Вход</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>Телефон: +7 (495) 123-45-67</li>
+                        <li>Email: dubki-2@gmail.com</li>
+                        <li>Адрес: Владимирская область, Александровский район, СТСН Дубки-2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СТСН "Дубки-2". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Яндекс.Карты API -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ваш_api_ключ&lang=ru_RU" type="text/javascript"></script>
+    <script>
+        // Инициализация карты
+        ymaps.ready(init);
+        
+        function init() {
+            // Координаты центра карты (можно изменить на нужные)
+            var myMap = new ymaps.Map("yandex-map", {
+                center: [56.42757891083619, 38.725055441856114], // Москва (замените на координаты вашего СТСН)
+                zoom: 15
+            });
+            
+            // Добавляем метку (можно изменить координаты и текст)
+            var myPlacemark = new ymaps.Placemark([55.76, 37.64], {
+                hintContent: 'СТСН "Дубки-2"',
+                balloonContent: 'Садовое товарищество "Дубки-2"'
+            });
+            
+            myMap.geoObjects.add(myPlacemark);
+            
+            // Опционально: добавляем элементы управления
+            myMap.controls
+                .remove('geolocationControl')
+                .remove('searchControl')
+                .remove('trafficControl')
+                .remove('typeSelector')
+                .remove('fullscreenControl')
+                .remove('rulerControl');
+        }
+    </script>
+</body>
+</html>

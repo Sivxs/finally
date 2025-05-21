@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форум - СТСН "Дубки-2"</title>
+    <link rel="shortcut icon" href="images/group.png"/>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary: #f5f5f5;
+            --text: #333;
+            --text-light: #666;
+            --background: #fff;
+            --card-bg: #f9f9f9;
+            --border-radius: 12px;
+            --gap: 20px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--background);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin: 40px 0;
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        /* Forum Controls */
+        .forum-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Forum Categories */
+        .forum-categories {
+            margin-bottom: 30px;
+        }
+
+        .category-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            font-weight: 500;
+        }
+
+        /* Topics List */
+        .topics-list {
+            background-color: var(--card-bg);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .topic {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+            background-color: #d1e7d1;
+        }
+
+        .topic:last-child {
+            border-bottom: none;
+        }
+
+        .topic:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .topic-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--primary-light);
+        }
+
+        .topic-info {
+            flex-grow: 1;
+        }
+
+        .topic-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .topic-meta {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .topic-stats {
+            text-align: right;
+            min-width: 100px;
+        }
+
+        .topic-views, .topic-replies {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Create Topic Button */
+        .create-topic-btn {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        /* Create Topic Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--background);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-upload-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-light);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        /* Login Notice */
+        .login-notice {
+            text-align: center;
+            padding: 30px;
+            background-color: #d1e7d1;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .forum-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .topic {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topic-stats {
+                text-align: left;
+                margin-top: 10px;
+                display: flex;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .modal-content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html"><img src="images/logo.jpg" alt="СТСН Дубки-2" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="documents.html">Документы</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                    <li><a href="forum.html">Форум</a></li>
+                    <li><a href="plots.html">Участки</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <a href="auth.html" class="btn btn-primary">Вход/Регистрация</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Форум СТСН "Дубки-2"</h1>
+        
+        <!-- Поиск по форуму -->
+        <div class="forum-controls">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="topicSearch" placeholder="Поиск по темам...">
+            </div>
+            <button class="btn btn-primary" id="createTopicBtn">Создать тему</button>
+        </div>
+        
+        <!-- Категории форума -->
+        <div class="forum-categories">
+            <div class="category-header">Общие обсуждения</div>
+            <div class="topics-list" id="topicsList">
+                <!-- Темы форума -->
+                <div class="topic">
+                    <div class="topic-icon">💬</div>
+                    <div class="topic-info">
+                        <div class="topic-title"><a href="topic.html">Подготовка к летнему сезону 2023</a></div>
+                        <div class="topic-meta">Автор: Иванов И.И. | Дата: 15.05.2023</div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="topic-replies">Ответов: 12</div>
+                        <div class="topic-views">Просмотров: 145</div>
+                    </div>
+                </div>
+                
+                <div class="topic">
+                    <div class="topic-icon">🛠️</div>
+                    <div class="topic-info">
+                        <div class="topic-title"><a href="topic.html">Ремонт центральной дороги</a></div>
+                        <div class="topic-meta">Автор: Петров П.П. | Дата: 10.05.2023</div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="topic-replies">Ответов: 8</div>
+                        <div class="topic-views">Просмотров: 98</div>
+                    </div>
+                </div>
+                
+                <div class="topic">
+                    <div class="topic-icon">🌳</div>
+                    <div class="topic-info">
+                        <div class="topic-title"><a href="topic.html">Благоустройство территории</a></div>
+                        <div class="topic-meta">Автор: Сидорова С.С. | Дата: 05.05.2023</div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="topic-replies">Ответов: 15</div>
+                        <div class="topic-views">Просмотров: 210</div>
+                    </div>
+                </div>
+                
+                <div class="topic">
+                    <div class="topic-icon">💧</div>
+                    <div class="topic-info">
+                        <div class="topic-title"><a href="topic.html">Проблемы с водоснабжением</a></div>
+                        <div class="topic-meta">Автор: Кузнецов К.К. | Дата: 28.04.2023</div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="topic-replies">Ответов: 23</div>
+                        <div class="topic-views">Просмотров: 345</div>
+                    </div>
+                </div>
+                
+                <div class="topic">
+                    <div class="topic-icon">🚗</div>
+                    <div class="topic-info">
+                        <div class="topic-title"><a href="topic.html">Парковка на территории СТСН</a></div>
+                        <div class="topic-meta">Автор: Николаев Н.Н. | Дата: 20.04.2023</div>
+                    </div>
+                    <div class="topic-stats">
+                        <div class="topic-replies">Ответов: 17</div>
+                        <div class="topic-views">Просмотров: 278</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Для неавторизованных пользователей -->
+        <!-- <div class="login-notice" id="loginNotice">
+            <h3>Хотите создать тему?</h3>
+            <p>Для создания новых тем на форуме необходимо авторизоваться. Присоединяйтесь к нашему сообществу!</p>
+            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                <button class="btn btn-outline" id="noticeLoginBtn">Войти</button>
+                <button class="btn btn-primary" id="noticeRegisterBtn">Зарегистрироваться</button>
+            </div>
+        </div> -->
+    </main>
+
+    <!-- Модальное окно создания темы -->
+    <div class="modal" id="createTopicModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeTopicModal">&times;</span>
+            <h2>Создать новую тему</h2>
+            <form id="topicForm">
+                <div class="form-group">
+                    <label for="topicCategory">Категория</label>
+                    <select id="topicCategory" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="general">Общие обсуждения</option>
+                        <option value="repairs">Ремонт и благоустройство</option>
+                        <option value="problems">Проблемы и вопросы</option>
+                        <option value="offers">Предложения</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="topicTitle">Название темы</label>
+                    <input type="text" id="topicTitle" placeholder="Введите название темы" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="topicText">Текст сообщения</label>
+                    <textarea id="topicText" placeholder="Напишите ваше сообщение..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Прикрепленные фото (максимум 5)</label>
+                    <div class="file-upload">
+                        <label for="topicImages" class="file-upload-btn">Выбрать файлы</label>
+                        <span class="file-name" id="fileName">Файлы не выбраны</span>
+                        <input type="file" id="topicImages" accept="image/*" multiple style="display: none;">
+                    </div>
+                    <div class="preview-images" id="previewContainer"></div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Создать тему</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>СТСН "Дубки-2"</h3>
+                    <p>Садовое товарищество с комфортными условиями для отдыха и садоводства.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="news.html">Новости</a></li>
+                        <li><a href="documents.html">Документы</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Сообщество</h3>
+                    <ul>
+                        <li><a href="forum.html">Форум</a></li>
+                        <li><a href="plots.html">Участки</a></li>
+                        <li><a href="auth.html">Регистрация</a></li>
+                        <li><a href="auth.html">Вход</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>Телефон: +7 (495) 123-45-67</li>
+                        <li>Email: dubki-2@gmail.com</li>
+                        <li>Адрес: Владимирская область, Александровский район, СТСН Дубки-2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СТСН "Дубки-2". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Состояние авторизации (для демонстрации)
+        let isAuthenticated = false;
+        
+        // Элементы управления
+        const createTopicBtn = document.getElementById('createTopicBtn');
+        const createTopicModal = document.getElementById('createTopicModal');
+        const closeTopicModal = document.getElementById('closeTopicModal');
+        const topicForm = document.getElementById('topicForm');
+        const topicImages = document.getElementById('topicImages');
+        const fileName = document.getElementById('fileName');
+        const previewContainer = document.getElementById('previewContainer');
+        const loginNotice = document.getElementById('loginNotice');
+        const topicSearch = document.getElementById('topicSearch');
+        const topicsList = document.getElementById('topicsList');
+        const topics = topicsList.querySelectorAll('.topic');
+        
+        // Показываем/скрываем уведомление для неавторизованных
+        if (isAuthenticated) {
+            loginNotice.style.display = 'none';
+        } else {
+            createTopicBtn.style.display = 'none';
+        }
+        
+        // Поиск по темам
+        topicSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            topics.forEach(topic => {
+                const title = topic.querySelector('.topic-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    topic.style.display = 'flex';
+                } else {
+                    topic.style.display = 'none';
+                }
+            });
+        });
+        
+        // Открытие модального окна создания темы
+        createTopicBtn.addEventListener('click', function() {
+            if (isAuthenticated) {
+                createTopicModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+        
+        // Закрытие модального окна
+        closeTopicModal.addEventListener('click', function() {
+            createTopicModal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+        
+        // Обработка выбора файлов
+        topicImages.addEventListener('change', function() {
+            const files = this.files;
+            if (files.length > 5) {
+                alert('Можно загрузить не более 5 изображений');
+                this.value = '';
+                return;
+            }
+            
+            fileName.textContent = files.length > 0 ? 
+                `Выбрано ${files.length} файл(ов)` : 
+                'Файлы не выбраны';
+            
+            // Очищаем превью
+            previewContainer.innerHTML = '';
+            
+            // Показываем превью выбранных изображений
+            if (files.length > 0) {
+                for (let i = 0; i < Math.min(files.length, 5); i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'preview-image';
+                            previewContainer.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+        
+        // Отправка формы
+        topicForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Здесь должна быть логика отправки данных на сервер
+            alert('Тема успешно создана!');
+            createTopicModal.style.display = 'none';
+            document.body.style.overflow = '';
+            this.reset();
+            previewContainer.innerHTML = '';
+            fileName.textContent = 'Файлы не выбраны';
+        });
+        
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(e) {
+            if (e.target === createTopicModal) {
+                createTopicModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Кнопки в уведомлении для неавторизованных
+        document.getElementById('noticeLoginBtn').addEventListener('click', function() {
+            // Здесь должна быть логика перехода на страницу входа
+            alert('Переход на страницу входа');
+        });
+        
+        document.getElementById('noticeRegisterBtn').addEventListener('click', function() {
+            // Здесь должна быть логика перехода на страницу регистрации
+            alert('Переход на страницу регистрации');
+        });
+    </script>
+</body>
+</html>

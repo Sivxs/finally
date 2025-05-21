@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - СТСН "Дубки-2"</title>
+    <link rel="shortcut icon" href="images/group.png"/>
+    <style>
+        /* Общие стили */
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary: #f5f5f5;
+            --text: #333;
+            --text-light: #666;
+            --background: #fff;
+            --card-bg: #f9f9f9;
+            --border-radius: 12px;
+            --gap: 20px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --error: #d32f2f;
+            --success: #2e7d32;
+            --warning: #ff8f00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            background-color: var(--background);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background-color: transparent;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Основной контент */
+        main {
+            padding: 40px 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            background: #d1e7d1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin-bottom: 10px;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            transition: all 0.3s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Контент */
+        .content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Платежи */
+        .payment-form {
+            background: #d1e7d1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+
+        .payments-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .payment-card {
+            background: #d1e7d1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .payment-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-paid {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Чат */
+        .chat {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+
+        .message-admin {
+            margin-left: auto;
+            background: var(--primary-light);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .message-user {
+            margin-right: auto;
+            background: var(--secondary);
+            padding: 10px 15px;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: var(--card-bg);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 40px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-light);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Стили для заявок на регистрацию */
+        .registrations-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .registration-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .registration-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .registration-info {
+            margin-bottom: 15px;
+        }
+
+        .registration-info p {
+            margin-bottom: 8px;
+        }
+
+        .registration-document {
+            margin: 15px 0;
+            padding: 10px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        .registration-document:hover {
+            background: var(--secondary);
+        }
+
+        .registration-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: var(--success);
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--error);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="index.html"><img src="images/logo.jpg" alt="СТСН Дубки-2" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="news.html">Новости</a></li>
+                    <li><a href="documents.html">Документы</a></li>
+                    <li><a href="plots.html">Участки</a></li>
+                    <li><a href="forum.html">Форум</a></li>
+                    <li><a href="contacts.html">Контакты</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button class="btn btn-outline" onclick="logout()">Выйти</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard">
+            <aside class="sidebar">
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar"></div>
+                    <div class="user-name" id="userName"></div>
+                    <div class="user-role" id="userRole"></div>
+            </div>
+                <ul class="menu">
+                    <li><a href="#" onclick="showSection('payments')" class="active">Платежи</a></li>
+                    <li><a href="#" onclick="showSection('chat')">Сообщения</a></li>
+                    <li id="adminRegistrations" style="display: none;">
+                        <a href="#" onclick="showSection('registrations')">Заявки на регистрацию</a>
+                    </li>
+                </ul>
+            </aside>
+
+            <div class="content">
+                <!-- Секция платежей -->
+                <section id="payments" class="section active">
+                    <h2>Платежи</h2>
+                    
+                    <!-- Форма создания платежа (только для админа) -->
+                    <div id="paymentForm" class="payment-form" style="display: none;">
+                        <h3>Создать новый платеж</h3>
+                        <form onsubmit="createPayment(event)">
+                            <div class="form-group">
+                                <label for="paymentTitle">Назначение платежа</label>
+                                <input type="text" id="paymentTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="paymentAmount">Сумма (₽)</label>
+                                <input type="number" id="paymentAmount" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="paymentDueDate">Срок оплаты</label>
+                                <input type="date" id="paymentDueDate" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Создать платеж</button>
+                        </form>
+                    </div>
+
+                    <!-- Список платежей -->
+                    <div id="paymentsList" class="payments-list"></div>
+                </section>
+
+                <!-- Секция чата -->
+                <section id="chat" class="section">
+                    <h2>Сообщения</h2>
+                    <div class="chat">
+                        <div class="chat-messages" id="chatMessages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="messageInput" placeholder="Введите сообщение...">
+                            <button class="btn btn-primary" onclick="sendMessage()">Отправить</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Секция заявок на регистрацию (только для админа) -->
+                <section id="registrations" class="section">
+                    <h2>Заявки на регистрацию</h2>
+                    <div id="registrationsList" class="registrations-list"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>СТСН "Дубки-2"</h3>
+                    <p>Садовое товарищество с комфортными условиями для отдыха и садоводства.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Навигация</h3>
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="news.html">Новости</a></li>
+                        <li><a href="documents.html">Документы</a></li>
+                        <li><a href="contacts.html">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Сообщество</h3>
+                    <ul>
+                        <li><a href="forum.html">Форум</a></li>
+                        <li><a href="plots.html">Участки</a></li>
+                        <li><a href="auth.html">Регистрация</a></li>
+                        <li><a href="auth.html">Вход</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li>Телефон: +7 (495) 123-45-67</li>
+                        <li>Email: dubki-2@gmail.com</li>
+                        <li>Адрес: Владимирская область, Александровский район, СТСН Дубки-2</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 СТСН "Дубки-2". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Проверка авторизации
+        const userRole = localStorage.getItem('userRole');
+        const userName = localStorage.getItem('userName');
+
+        if (!userRole || !userName) {
+                window.location.href = 'auth.html';
+        }
+
+        // Инициализация интерфейса
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userRole').textContent = userRole === 'admin' ? 'Администратор' : 'Пользователь';
+        document.getElementById('userAvatar').textContent = userName[0].toUpperCase();
+
+        // Показываем форму создания платежа только админу
+        if (userRole === 'admin') {
+            document.getElementById('paymentForm').style.display = 'block';
+            document.getElementById('adminRegistrations').style.display = 'block';
+        }
+
+        // Переключение между разделами
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.menu a[onclick="showSection('${sectionId}')"]`).classList.add('active');
+
+            // Обновляем данные раздела
+            if (sectionId === 'payments') {
+                loadPayments();
+            } else if (sectionId === 'chat') {
+                loadMessages();
+            } else if (sectionId === 'registrations') {
+                loadRegistrations();
+            }
+        }
+
+        // Функции для работы с платежами
+        function createPayment(event) {
+            event.preventDefault();
+            const payment = {
+                id: Date.now(),
+                title: document.getElementById('paymentTitle').value,
+                amount: document.getElementById('paymentAmount').value,
+                dueDate: document.getElementById('paymentDueDate').value,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            payments.push(payment);
+            localStorage.setItem('payments', JSON.stringify(payments));
+
+            event.target.reset();
+            loadPayments();
+            alert('Платеж создан');
+        }
+
+        function loadPayments() {
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            const paymentsList = document.getElementById('paymentsList');
+            paymentsList.innerHTML = '';
+
+            payments.forEach(payment => {
+                const paymentElement = document.createElement('div');
+                paymentElement.className = 'payment-card';
+                paymentElement.innerHTML = `
+                    <h3>${payment.title}</h3>
+                    <p>Сумма: ${payment.amount} ₽</p>
+                    <p>Срок оплаты: ${new Date(payment.dueDate).toLocaleDateString()}</p>
+                    <span class="payment-status status-${payment.status}">
+                        ${payment.status === 'pending' ? 'Ожидает оплаты' : 'Оплачено'}
+                        </span>
+                    ${payment.status === 'pending' && userRole !== 'admin' ? 
+                        `<button class="btn btn-primary" style="margin-top: 10px;" onclick="payPayment(${payment.id})">
+                            Оплатить
+                        </button>` : ''}
+                `;
+                paymentsList.appendChild(paymentElement);
+            });
+        }
+
+        function payPayment(paymentId) {
+            // В реальном приложении здесь будет интеграция с платежной системой
+            alert('Переход к оплате...');
+            
+            const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+            const paymentIndex = payments.findIndex(p => p.id === paymentId);
+            if (paymentIndex !== -1) {
+                payments[paymentIndex].status = 'paid';
+                localStorage.setItem('payments', JSON.stringify(payments));
+                loadPayments();
+            }
+        }
+
+        // Функции для работы с чатом
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+
+            const relevantMessages = userRole === 'admin' ? 
+                messages : 
+                messages.filter(m => m.to === userName || m.from === userName);
+
+            relevantMessages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message message-${message.from === userName ? 'user' : 'admin'}`;
+                messageElement.textContent = message.text;
+                chatMessages.appendChild(messageElement);
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+            
+            if (text) {
+        const message = {
+            text,
+                    from: userName,
+                    to: userRole === 'admin' ? 'user' : 'admin',
+                    timestamp: new Date().toISOString()
+        };
+
+                const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+        messages.push(message);
+        localStorage.setItem('messages', JSON.stringify(messages));
+
+        input.value = '';
+                loadMessages();
+            }
+        }
+
+        // Обработка нажатия Enter в чате
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+            e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Функция выхода
+        function logout() {
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'auth.html';
+        }
+
+        // Загружаем платежи при загрузке страницы
+        loadPayments();
+
+        // Обновляем чат каждые 5 секунд
+        setInterval(function() {
+            if (document.getElementById('chat').classList.contains('active')) {
+                loadMessages();
+            }
+        }, 5000);
+
+        // Функции для работы с заявками на регистрацию
+        function loadRegistrations() {
+            if (userRole !== 'admin') return;
+
+            const registrations = JSON.parse(localStorage.getItem('registrations') || '[]');
+            const registrationsList = document.getElementById('registrationsList');
+            registrationsList.innerHTML = '';
+
+            registrations.forEach(registration => {
+                const registrationElement = document.createElement('div');
+                registrationElement.className = 'registration-card';
+                registrationElement.innerHTML = `
+                    <h3>Заявка на регистрацию</h3>
+                    <div class="registration-info">
+                        <p><strong>Имя:</strong> ${registration.firstName}</p>
+                        <p><strong>Фамилия:</strong> ${registration.lastName}</p>
+                        <p><strong>Email:</strong> ${registration.email}</p>
+                        <p><strong>Телефон:</strong> ${registration.phone}</p>
+                        <p><strong>Дата подачи:</strong> ${new Date(registration.timestamp).toLocaleString()}</p>
+                    </div>
+                    <div class="registration-document" onclick="viewDocument('${registration.document}')">
+                        <p><strong>Документ:</strong> ${registration.documentName}</p>
+                        <p style="color: var(--primary);">Нажмите, чтобы просмотреть документ</p>
+                    </div>
+                    <div class="registration-actions">
+                        <button class="btn btn-success" onclick="approveRegistration('${registration.email}')">
+                            Подтвердить
+                        </button>
+                        <button class="btn btn-danger" onclick="rejectRegistration('${registration.email}')">
+                            Отклонить
+                        </button>
+                    </div>
+                `;
+                registrationsList.appendChild(registrationElement);
+            });
+        }
+
+        function viewDocument(documentData) {
+            // Открываем документ в новом окне
+            const win = window.open();
+            win.document.write(`
+                <iframe src="${documentData}" style="width:100%;height:100vh;border:none;"></iframe>
+            `);
+        }
+
+        function approveRegistration(email) {
+            const registrations = JSON.parse(localStorage.getItem('registrations') || '[]');
+            const registration = registrations.find(r => r.email === email);
+            
+            if (registration) {
+                // Создаем подтвержденный аккаунт
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                users.push({
+                    firstName: registration.firstName,
+                    lastName: registration.lastName,
+                    email: registration.email,
+                    phone: registration.phone,
+                    password: registration.password,
+                    role: 'user',
+                    isApproved: true,
+                    registrationDate: new Date().toISOString()
+                });
+                localStorage.setItem('users', JSON.stringify(users));
+
+                // Удаляем заявку
+                const updatedRegistrations = registrations.filter(r => r.email !== email);
+                localStorage.setItem('registrations', JSON.stringify(updatedRegistrations));
+
+                loadRegistrations();
+                alert('Регистрация подтверждена');
+            }
+        }
+
+        function rejectRegistration(email) {
+            if (confirm('Вы уверены, что хотите отклонить эту заявку?')) {
+                const registrations = JSON.parse(localStorage.getItem('registrations') || '[]');
+                const updatedRegistrations = registrations.filter(r => r.email !== email);
+                localStorage.setItem('registrations', JSON.stringify(updatedRegistrations));
+                
+                loadRegistrations();
+                alert('Заявка отклонена');
+            }
+        }
+</script>
+</body>
+</html>
